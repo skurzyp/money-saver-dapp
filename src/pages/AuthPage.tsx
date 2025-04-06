@@ -10,9 +10,9 @@ const AuthPage  = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen w-screen bg-black text-white flex flex-col md:flex-row">
+    <div className="min-h-screen w-screen bg-black text-white flex flex-col md:flex-row bg-gradient-to-br from-[#3b2d4d] to-[#2d1e3e]">
       {/* Left side with logo and slogan */}
-      <div className="w-full md:w-1/2 flex flex-col justify-center items-center p-8 bg-gradient-to-br from-gray-900 to-black">
+      <div className="w-full md:w-1/2 flex flex-col justify-center items-center ">
         <div className="max-w-md space-y-6">
           <div className="flex items-center space-x-3">
             <div className="relative w-12 h-12">
@@ -51,7 +51,7 @@ const AuthPage  = () => {
       </div>
 
       {/* Right side with login */}
-      <div className="w-full md:w-1/2 flex justify-center items-center p-8">
+      <div className="w-full md:w-1/2 flex justify-center items-center p-8 ">
         <Card className="w-full max-w-md p-8 bg-gray-900 border-gray-800">
           <div className="space-y-6">
             <div className="text-center">
