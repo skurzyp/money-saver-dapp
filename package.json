@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.1.2",
-    "@reown/appkit": "^1.7.1",
-    "@reown/appkit-adapter-solana": "^1.7.1",
+    "@reown/appkit": "^1.7.2",
+    "@reown/appkit-adapter-solana": "^1.7.2",
     "@solana/wallet-adapter-wallets": "^0.19.33",
     "@tailwindcss/vite": "^4.0.17",
     "class-variance-authority": "^0.7.1",
