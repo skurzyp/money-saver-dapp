@@ -4,10 +4,12 @@ import { useState } from "react"
 import { ChevronDown, Info, Link } from 'lucide-react';
 import GettingStartedDrawer from '../components/gettingStartedDrawer.tsx';
 import FeaturesSection from '../components/featuresSection.tsx';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function StartingScreen() {
   const [showGettingStarted, setShowGettingStarted] = useState(false)
+  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen w-screen bg-gradient-to-b from-[#3b2d4d] to-[#2d1e3e] text-white">
@@ -28,12 +30,14 @@ export default function StartingScreen() {
                 Getting started <ChevronDown className="h-4 w-4" />
               </button>
               <button
-                className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors">
-                Dashboard <ChevronDown className="h-4 w-4" />
+                className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors"
+                onClick={() => navigate('/dashboard')}
+              >
+                Dashboard
               </button>
               <button
                 className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors">
-                Documentation <ChevronDown className="h-4 w-4" />
+                Documentation
               </button>
             </div>
             <appkit-button />
