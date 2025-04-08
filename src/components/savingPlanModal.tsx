@@ -2,14 +2,32 @@
 
 import { ExternalLink, HelpCircle, X, Link } from "lucide-react"
 import { SavingPlan } from '../types/types.ts';
+import React from 'react';
 
 
 interface SavingPlanModalProps {
   plan: SavingPlan
   onClose: () => void
+  activeSavingPlans: SavingPlan[] | null;
+  setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>;
 }
 
-export default function SavingPlanModal({ plan, onClose }: SavingPlanModalProps) {
+function removePlan(
+  plan: SavingPlan,
+  activeSavingPlans: SavingPlan[] | null,
+  setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>
+): boolean {
+
+  if(activeSavingPlans !== null && plan !== null) {
+    setActiveSavingPlans(
+      activeSavingPlans?.filter(activePlan => plan.id !== activePlan.id)
+    )
+    return true;
+  }
+  throw('Error removing plan.');
+}
+
+export default function SavingPlanModal({ plan, onClose, activeSavingPlans, setActiveSavingPlans }: SavingPlanModalProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
@@ -80,7 +98,10 @@ export default function SavingPlanModal({ plan, onClose }: SavingPlanModalProps)
             <button className="flex-1 px-4 py-3 bg-[#0fe0b6] hover:bg-[#0cc9a3] text-[#2d1e3e] font-medium rounded-md transition-colors">
               Add Funds
             </button>
-            <button className="flex-1 px-4 py-3 bg-[#ff6b8b]/20 hover:bg-[#ff6b8b]/30 text-[#ff6b8b] transition-colors rounded-md font-medium border border-[#ff6b8b]/30">
+            <button
+              className="flex-1 px-4 py-3 bg-[#ff6b8b]/20 hover:bg-[#ff6b8b]/30 text-[#ff6b8b] transition-colors rounded-md font-medium border border-[#ff6b8b]/30"
+              onClick={() => {removePlan(plan, activeSavingPlans, setActiveSavingPlans); onClose()}}
+            >
               End Strategy
             </button>
           </div>

@@ -5,6 +5,7 @@ import { Link, Plus } from 'lucide-react';
 import { SavingPlan } from '../types/types.ts';
 import SavingPlanModal from '../components/savingPlanModal.tsx';
 import CreateStrategyModal from '../components/createStrategyModal.tsx';
+import { strategies } from '../lib/sampleData.ts';
 
 // Sample saving plan data
 const samplePlan: SavingPlan = {
@@ -16,17 +17,13 @@ const samplePlan: SavingPlan = {
   target: 5000,
   current: 3250,
   image: "/placeholder.svg?height=200&width=400",
-  strategy: {
-    name: "Marinade Liquid Staking",
-    provider: "Marinade Finance",
-    providerUrl: "https://marinade.finance",
-    apy: 6.8,
-  },
+  strategy: strategies[0],
 }
 
 export default function Dashboard() {
   const [selectedPlan, setSelectedPlan] = useState<SavingPlan>()
   const [showCreateModal, setShowCreateModal] = useState(false)
+  const [activeSavingPlans, setActiveSavingPlans] = useState<SavingPlan[] | null>([samplePlan])
 
   return (
     <div className="min-h-screen min-w-screen bg-gradient-to-b from-[#3b2d4d] to-[#2d1e3e] text-white">
@@ -62,33 +59,39 @@ export default function Dashboard() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
-          {/* Example Saving Plan Card */}
-          <div
-            className="bg-gradient-to-br from-[#4d3c60] to-[#2d1e3e] rounded-xl border border-[#4d3c60] overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
-            onClick={() => setSelectedPlan(samplePlan)}
-          >
-            <div className="relative h-48">
-              {/*<Image src={samplePlan.image || "/placeholder.svg"} alt={samplePlan.name} fill className="object-cover" />*/}
-              <div className="absolute inset-0 bg-gradient-to-t from-[#2d1e3e] to-transparent"></div>
-              <div className="absolute bottom-4 left-4 right-4">
-                <h2 className="text-xl font-bold mb-1">{samplePlan.name}</h2>
-                <div className="w-full bg-[#2d1e3e]/50 rounded-full h-2.5">
-                  <div className="bg-[#0fe0b6] h-2.5 rounded-full" style={{ width: `${samplePlan.progress}%` }}></div>
+          {/* Render saving plans dynamically */}
+          {activeSavingPlans?.map((plan, index) => (
+            <div
+              key={index}
+              className="bg-gradient-to-br from-[#4d3c60] to-[#2d1e3e] rounded-xl border border-[#4d3c60] overflow-hidden shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 cursor-pointer"
+              onClick={() => setSelectedPlan(plan)}
+            >
+              <div className="relative h-48">
+                {/*<Image src={plan.image || "/placeholder.svg"} alt={plan.name} fill className="object-cover" />*/}
+                <div className="absolute inset-0 bg-gradient-to-t from-[#2d1e3e] to-transparent"></div>
+                <div className="absolute bottom-4 left-4 right-4">
+                  <h2 className="text-xl font-bold mb-1">{plan.name}</h2>
+                  <div className="w-full bg-[#2d1e3e]/50 rounded-full h-2.5">
+                    <div
+                      className="bg-[#0fe0b6] h-2.5 rounded-full"
+                      style={{ width: `${plan.progress}%` }}
+                    ></div>
+                  </div>
+                  <div className="flex justify-between text-sm mt-1">
+                    <span>${plan.current}</span>
+                    <span>${plan.target}</span>
+                  </div>
                 </div>
-                <div className="flex justify-between text-sm mt-1">
-                  <span>${samplePlan.current}</span>
-                  <span>${samplePlan.target}</span>
+              </div>
+              <div className="p-4">
+                <p className="text-gray-300 line-clamp-2">{plan.description}</p>
+                <div className="flex justify-between items-center mt-3">
+                  <div className="text-sm text-[#0fe0b6]">{plan.strategy.apy}% APY</div>
+                  <div className="text-xs text-gray-400">via {plan.strategy.provider}</div>
                 </div>
               </div>
             </div>
-            <div className="p-4">
-              <p className="text-gray-300 line-clamp-2">{samplePlan.description}</p>
-              <div className="flex justify-between items-center mt-3">
-                <div className="text-sm text-[#0fe0b6]">{samplePlan.strategy.apy}% APY</div>
-                <div className="text-xs text-gray-400">via {samplePlan.strategy.provider}</div>
-              </div>
-            </div>
-          </div>
+          ))}
 
           {/* Add New Card */}
           <div
@@ -102,13 +105,25 @@ export default function Dashboard() {
             <p className="text-gray-400 text-center mt-2">Start a new savings journey</p>
           </div>
         </div>
+
       </main>
 
       {/* View Strategy Modal */}
-      {selectedPlan && <SavingPlanModal plan={selectedPlan} onClose={() => setSelectedPlan(undefined)} />}
+      {selectedPlan && <SavingPlanModal
+        plan={selectedPlan}
+        onClose={() => setSelectedPlan(undefined)}
+        activeSavingPlans={activeSavingPlans}
+        setActiveSavingPlans={setActiveSavingPlans}
+      />}
 
       {/* Create Strategy Modal */}
-      {showCreateModal && <CreateStrategyModal onClose={() => setShowCreateModal(false)} />}
+      {showCreateModal && (
+        <CreateStrategyModal
+          onClose={() => setShowCreateModal(false)}
+          activeSavingPlans={activeSavingPlans}
+          setActiveSavingPlans={setActiveSavingPlans}
+        />
+      )}
     </div>
   )
 }

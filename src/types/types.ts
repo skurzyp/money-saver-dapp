@@ -1,6 +1,8 @@
 export type Strategy = {
   name: string;
   provider: string;
+  dual: boolean;
+  currency: Currency[];
   providerUrl: string;
   apy: number;
 };
@@ -15,3 +17,8 @@ export type SavingPlan = {
   image: string;
   strategy: Strategy;
 };
+
+export type Currency = {
+  name: string;
+  symbol: string;
+}
