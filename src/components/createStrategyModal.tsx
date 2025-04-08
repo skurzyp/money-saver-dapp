@@ -2,50 +2,35 @@
 
 import { useState } from "react";
 import { ChevronDown, HelpCircle, Info, Link, X } from "lucide-react";
-import { Strategy } from '../types/types.ts';
+import { SavingPlan, Strategy } from '../types/types.ts';
+import { strategies } from '../lib/sampleData.ts';
 
-// Sample strategies
-const strategies: Strategy[] = [
-  {
-    name: 'Marinade Liquid Staking', provider: 'Marinade Finance', apy: 6.8,
-    providerUrl: '',
-  },
-  { name: "USDC Lending", provider: "Solend", apy: 4.2, providerUrl: '',},
-  { name: "SOL-USDC LP", provider: "Orca", apy: 8.5, providerUrl: '', },
-  {  name: "RAY-SOL LP", provider: "Raydium", apy: 12.3, providerUrl: '', },
-];
-
-// Sample currencies
-const currencies = [
-  { id: "usd", name: "USD", symbol: "$" },
-  { id: "sol", name: "SOL", symbol: "SOL" },
-  { id: "usdc", name: "USDC", symbol: "USDC" },
-];
 
 interface CreateStrategyModalProps {
   onClose: () => void;
+  activeSavingPlans: SavingPlan[] | null;
+  setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>;
 }
 
-export default function CreateStrategyModal({ onClose }: CreateStrategyModalProps) {
+export default function CreateStrategyModal({ onClose, activeSavingPlans, setActiveSavingPlans }: CreateStrategyModalProps) {
   const [name, setName] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
-  const [selectedCurrency, setSelectedCurrency] = useState(currencies[0]);
   const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
-  const [initialAmount, setInitialAmount] = useState("");
-  const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showStrategyDropdown, setShowStrategyDropdown] = useState(false);
+
+  const isFormValid = name.trim() !== "" && targetAmount.trim() !== "" && selectedStrategy !== null;
+
 
   // Calculate estimated time to reach goal
   const calculateEstimatedTime = () => {
-    if (!selectedStrategy || !targetAmount || !initialAmount) return null;
+    if (!selectedStrategy || !targetAmount) return null;
 
     const target = Number.parseFloat(targetAmount);
-    const initial = Number.parseFloat(initialAmount);
 
-    if (isNaN(target) || isNaN(initial) || initial <= 0 || target <= initial) return null;
+    if (isNaN(target)) return null;
 
     const apy = selectedStrategy.apy / 100;
-    const years = Math.log(target / initial) / Math.log(1 + apy);
+    const years = Math.log(target / 100) / Math.log(1 + apy);
     const months = Math.ceil(years * 12);
 
     return months;
@@ -93,51 +78,6 @@ export default function CreateStrategyModal({ onClose }: CreateStrategyModalProp
               />
             </div>
 
-            {/* Target Goal */}
-            <div>
-              <label htmlFor="target-amount" className="block text-sm font-medium mb-2">
-                Target Goal
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  id="target-amount"
-                  value={targetAmount}
-                  onChange={(e) => setTargetAmount(e.target.value)}
-                  placeholder="Enter amount"
-                  className="w-full px-4 py-3 bg-[#2d1e3e] border border-[#4d3c60] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0fe0b6] focus:border-transparent pr-24"
-                />
-                <div className="absolute inset-y-0 right-0">
-                  <button
-                    type="button"
-                    className="h-full px-4 flex items-center gap-1 border-l border-[#4d3c60] text-gray-300 hover:text-white"
-                    onClick={() => setShowCurrencyDropdown(!showCurrencyDropdown)}
-                  >
-                    {selectedCurrency.symbol} <ChevronDown className="h-4 w-4" />
-                  </button>
-
-                  {/* Currency Dropdown */}
-                  {showCurrencyDropdown && (
-                    <div className="absolute top-full right-0 mt-1 w-32 bg-[#3b2d4d] border border-[#4d3c60] rounded-md shadow-lg z-10">
-                      {currencies.map((currency) => (
-                        <button
-                          key={currency.id}
-                          type="button"
-                          className="w-full text-left px-4 py-2 hover:bg-[#4d3c60] transition-colors"
-                          onClick={() => {
-                            setSelectedCurrency(currency);
-                            setShowCurrencyDropdown(false);
-                          }}
-                        >
-                          {currency.name} ({currency.symbol})
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
             {/* Investment Strategy */}
             <div>
               <label htmlFor="strategy" className="block text-sm font-medium mb-2">
@@ -183,6 +123,26 @@ export default function CreateStrategyModal({ onClose }: CreateStrategyModalProp
               </div>
             </div>
 
+            {/* Target Goal */}
+            <div>
+              <label htmlFor="target-amount" className="block text-sm font-medium mb-2">
+                Target Goal
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  id="target-amount"
+                  value={targetAmount}
+                  onChange={(e) => setTargetAmount(e.target.value)}
+                  placeholder="Enter amount"
+                  className="w-full px-4 py-3 bg-[#2d1e3e] border border-[#4d3c60] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0fe0b6] focus:border-transparent pr-24"
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
+                  <span className="text-gray-400">{selectedStrategy?.currency[0].symbol}</span>
+                </div>
+              </div>
+            </div>
+
             {/* Estimated Yield */}
             {selectedStrategy && (
               <div className="bg-[#2d1e3e] p-4 rounded-lg">
@@ -192,31 +152,11 @@ export default function CreateStrategyModal({ onClose }: CreateStrategyModalProp
                 <p className="text-[#0fe0b6] font-medium text-lg">{selectedStrategy.apy}% APY</p>
                 {estimatedMonths && (
                   <p className="text-sm text-gray-300 mt-1">
-                    Estimated time to reach goal: <span className="font-medium">{estimatedMonths} months</span>
+                    Estimated time to reach goal starting with 100 {selectedStrategy.currency[0].symbol}: <span className="font-medium">{estimatedMonths>0?estimatedMonths:0} months</span>
                   </p>
                 )}
               </div>
             )}
-
-            {/* Initial Payment */}
-            <div>
-              <label htmlFor="initial-amount" className="block text-sm font-medium mb-2">
-                Initial Investment
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  id="initial-amount"
-                  value={initialAmount}
-                  onChange={(e) => setInitialAmount(e.target.value)}
-                  placeholder="Enter amount"
-                  className="w-full px-4 py-3 bg-[#2d1e3e] border border-[#4d3c60] rounded-md focus:outline-none focus:ring-2 focus:ring-[#0fe0b6] focus:border-transparent pr-16"
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
-                  <span className="text-gray-400">{selectedCurrency.symbol}</span>
-                </div>
-              </div>
-            </div>
 
             {/* Disclosure */}
             <div className="bg-[#2d1e3e]/50 p-4 rounded-lg border border-[#4d3c60] text-sm text-gray-300">
@@ -233,7 +173,31 @@ export default function CreateStrategyModal({ onClose }: CreateStrategyModalProp
             <div className="flex gap-4">
               <button
                 type="submit"
-                className="flex-1 px-4 py-3 bg-[#0fe0b6] hover:bg-[#0cc9a3] text-[#2d1e3e] font-medium rounded-md transition-colors"
+                disabled={!isFormValid}
+                className={`flex-1 px-4 py-3 font-medium rounded-md transition-colors
+                            ${isFormValid
+                                          ? 'bg-[#0fe0b6] text-white hover:bg-[#0cc9a3] hover:text-[#0fe0b6]'
+                                          : 'bg-[#4d3c60] text-gray-500 cursor-not-allowed'}
+                          `}
+                onClick={(e) => {
+                  e.preventDefault(); // prevent form reload
+
+                  if (!name || !targetAmount || !selectedStrategy) return;
+
+                  const newPlan: SavingPlan = {
+                    id: new Date().getTime().toString(),
+                    name,
+                    target: parseFloat(targetAmount),
+                    current: 0, // assume starting amount
+                    progress: (100 / parseFloat(targetAmount)) * 100,
+                    description: `Investing in ${selectedStrategy.name} via ${selectedStrategy.provider}`,
+                    image: '',
+                    strategy: selectedStrategy
+                  };
+
+                  setActiveSavingPlans([...activeSavingPlans as SavingPlan[], newPlan]);
+                  onClose();
+                }}
               >
                 Start Strategy
               </button>
