@@ -176,7 +176,7 @@ export default function CreateStrategyModal({ onClose, activeSavingPlans, setAct
                 disabled={!isFormValid}
                 className={`flex-1 px-4 py-3 font-medium rounded-md transition-colors
                             ${isFormValid
-                                          ? 'bg-[#0fe0b6] text-[#2d1e3e] hover:bg-[#0cc9a3]'
+                                          ? 'bg-[#0fe0b6] text-white hover:bg-[#0cc9a3] hover:text-[#0fe0b6]'
                                           : 'bg-[#4d3c60] text-gray-500 cursor-not-allowed'}
                           `}
                 onClick={(e) => {

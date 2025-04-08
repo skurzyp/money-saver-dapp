@@ -51,7 +51,7 @@ export default function Dashboard() {
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-3xl font-bold">Your Saving Plans</h1>
           <button
-            className="px-4 py-2 bg-[#0fe0b6] hover:bg-[#0cc9a3] text-[#2d1e3e] font-medium rounded-md transition-colors"
+            className="px-4 py-2 bg-[#0fe0b6] hover:bg-[#0cc9a3] text-white hover:text-[#0fe0b6] font-medium rounded-md transition-colors"
             onClick={() => setShowCreateModal(true)}
           >
             Create New Plan
