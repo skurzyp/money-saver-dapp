@@ -1,4 +1,4 @@
-export type Strategy = {
+export type SavingStrategy = {
   name: string;
   provider: string;
   dual: boolean;
@@ -15,7 +15,7 @@ export type SavingPlan = {
   target: number;
   current: number;
   image: string;
-  strategy: Strategy;
+  strategy: SavingStrategy;
 };
 
 export type Currency = {

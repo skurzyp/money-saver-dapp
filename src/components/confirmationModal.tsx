@@ -1,11 +1,11 @@
-"use client"
+'use client';
 
-import { X } from "lucide-react"
+import { X } from 'lucide-react';
 
 interface ConfirmationModalProps {
-  message: string
-  onConfirm: () => void
-  onCancel: () => void
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
 export default function ConfirmationModal({ message, onConfirm, onCancel }: ConfirmationModalProps) {
@@ -15,7 +15,8 @@ export default function ConfirmationModal({ message, onConfirm, onCancel }: Conf
       <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onCancel}></div>
 
       {/* Modal */}
-      <div className="bg-gradient-to-br from-[#4d3c60] to-[#2d1e3e] rounded-xl border border-[#4d3c60] shadow-2xl w-full max-w-md relative z-10 animate-fade-in">
+      <div
+        className="bg-gradient-to-br from-[#4d3c60] to-[#2d1e3e] rounded-xl border border-[#4d3c60] shadow-2xl w-full max-w-md relative z-10 animate-fade-in">
         {/* Close button */}
         <button
           onClick={onCancel}
@@ -47,5 +48,5 @@ export default function ConfirmationModal({ message, onConfirm, onCancel }: Conf
         </div>
       </div>
     </div>
-  )
+  );
 }
