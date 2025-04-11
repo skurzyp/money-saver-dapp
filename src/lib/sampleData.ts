@@ -1,5 +1,5 @@
 // Sample strategies
-import { Currency, Strategy } from '../types/types.ts';
+import { Currency, SavingStrategy } from '../types/types.ts';
 
 // Sample currencies
 export const currencies: Currency[] = [
@@ -10,7 +10,7 @@ export const currencies: Currency[] = [
 ];
 
 
-export const strategies: Strategy[] = [
+export const strategies: SavingStrategy[] = [
   {
     name: 'Marinade Liquid Staking USD', provider: 'Marinade Finance', apy: 6.8,
     providerUrl: '',

@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 import { ChevronDown, Info, Link } from 'lucide-react';
 import GettingStartedDrawer from '../components/gettingStartedDrawer.tsx';

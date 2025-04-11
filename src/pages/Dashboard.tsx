@@ -1,29 +1,31 @@
-"use client"
-
-import { useState } from "react"
+import { useEffect, useState } from 'react';
 import { Link, Plus } from 'lucide-react';
 import { SavingPlan } from '../types/types.ts';
 import SavingPlanModal from '../components/savingPlanModal.tsx';
 import CreateStrategyModal from '../components/createStrategyModal.tsx';
-import { strategies } from '../lib/sampleData.ts';
+import { getSavingPlans } from '../lib/firebase/repository/SavingPlansRepository.ts';
+import { useAppKitAccount } from '@reown/appkit/react';
 
-// Sample saving plan data
-const samplePlan: SavingPlan = {
-  id: "1",
-  name: "Vacation Fund",
-  description:
-    "Saving for my dream vacation to Bali next summer. This fund will cover flights, accommodations, and activities for a 2-week stay.",
-  progress: 65,
-  target: 5000,
-  current: 3250,
-  image: "/placeholder.svg?height=200&width=400",
-  strategy: strategies[0],
-}
 
 export default function Dashboard() {
-  const [selectedPlan, setSelectedPlan] = useState<SavingPlan>()
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [activeSavingPlans, setActiveSavingPlans] = useState<SavingPlan[] | null>([samplePlan])
+  const [selectedPlan, setSelectedPlan] = useState<SavingPlan>();
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [activeSavingPlans, setActiveSavingPlans] = useState<SavingPlan[] | null>([]);
+  const [_loading, setLoading] = useState(true);
+  const { address, isConnected } = useAppKitAccount();
+
+  const fetchPlans = async () => {
+    if (!isConnected && address !== undefined) return;
+    setLoading(true);
+    const plans = await getSavingPlans(address as string);
+    setActiveSavingPlans(plans);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    console.log(`address: ${address}, isConnected: ${isConnected}`);
+    fetchPlans();
+  }, [address]);
 
   return (
     <div className="min-h-screen min-w-screen bg-gradient-to-b from-[#3b2d4d] to-[#2d1e3e] text-white">
@@ -114,17 +116,20 @@ export default function Dashboard() {
         onClose={() => setSelectedPlan(undefined)}
         activeSavingPlans={activeSavingPlans}
         setActiveSavingPlans={setActiveSavingPlans}
+        walletAddress={address}
       />}
 
       {/* Create Strategy Modal */}
       {showCreateModal && (
         <CreateStrategyModal
-          onClose={() => setShowCreateModal(false)}
-          activeSavingPlans={activeSavingPlans}
-          setActiveSavingPlans={setActiveSavingPlans}
+          onClose={() => {
+            setShowCreateModal(false);
+            fetchPlans();
+          }}
+          walletAddress={address}
         />
       )}
     </div>
-  )
+  );
 }
 

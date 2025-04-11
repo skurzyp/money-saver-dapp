@@ -1,34 +1,44 @@
-"use client"
+'use client';
 
-import { ExternalLink, HelpCircle, X, Link } from "lucide-react"
-import { SavingPlan } from '../types/types.ts'
-import React, { useState } from 'react'
+import { ExternalLink, HelpCircle, X, Link } from 'lucide-react';
+import { SavingPlan } from '../types/types.ts';
+import React, { useState } from 'react';
 import ConfirmationModal from './confirmationModal.tsx';
+import { deleteSavingPlan } from '../lib/firebase/repository/SavingPlansRepository.ts';
 
 
 interface SavingPlanModalProps {
-  plan: SavingPlan
-  onClose: () => void
+  plan: SavingPlan;
+  onClose: () => void;
   activeSavingPlans: SavingPlan[] | null;
   setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>;
+  walletAddress: string | undefined;
 }
 
 function removePlan(
   plan: SavingPlan,
   activeSavingPlans: SavingPlan[] | null,
-  setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>
+  setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>,
+  walletAddress: string | undefined,
 ): boolean {
-  if (activeSavingPlans !== null && plan !== null) {
+  if (activeSavingPlans !== null && plan !== null && walletAddress !== undefined) {
+    deleteSavingPlan(walletAddress, plan).then((resp) => console.log(`Removal ${resp ? 'successful' : 'unsuccessful'}`));
     setActiveSavingPlans(
-      activeSavingPlans.filter(activePlan => plan.id !== activePlan.id)
-    )
-    return true
+      activeSavingPlans.filter(activePlan => plan.id !== activePlan.id),
+    );
+    return true;
   }
-  throw ('Error removing plan.')
+  throw ('Error removing plan.');
 }
 
-export default function SavingPlanModal({ plan, onClose, activeSavingPlans, setActiveSavingPlans }: SavingPlanModalProps) {
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+export default function SavingPlanModal({
+                                          plan,
+                                          onClose,
+                                          activeSavingPlans,
+                                          setActiveSavingPlans,
+                                          walletAddress,
+                                        }: SavingPlanModalProps) {
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
   return (
     <>
@@ -37,7 +47,8 @@ export default function SavingPlanModal({ plan, onClose, activeSavingPlans, setA
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose}></div>
 
         {/* Modal */}
-        <div className="bg-gradient-to-br from-[#4d3c60] to-[#2d1e3e] rounded-xl border border-[#4d3c60] shadow-2xl w-full max-w-lg relative z-10 animate-fade-in">
+        <div
+          className="bg-gradient-to-br from-[#4d3c60] to-[#2d1e3e] rounded-xl border border-[#4d3c60] shadow-2xl w-full max-w-lg relative z-10 animate-fade-in">
           {/* Close button */}
           <button
             onClick={onClose}
@@ -99,7 +110,8 @@ export default function SavingPlanModal({ plan, onClose, activeSavingPlans, setA
 
             {/* Actions */}
             <div className="flex gap-4 mb-4">
-              <button className="flex-1 px-4 py-3 bg-[#0fe0b6] hover:bg-[#0cc9a3] text-[#2d1e3e] font-medium rounded-md transition-colors">
+              <button
+                className="flex-1 px-4 py-3 bg-[#0fe0b6] hover:bg-[#0cc9a3] text-white hover:text-[#0fe0b6] font-medium rounded-md transition-colors">
                 Add Funds
               </button>
               <button
@@ -128,13 +140,13 @@ export default function SavingPlanModal({ plan, onClose, activeSavingPlans, setA
         <ConfirmationModal
           message="Are you sure you want to end this strategy?"
           onConfirm={() => {
-            removePlan(plan, activeSavingPlans, setActiveSavingPlans)
-            setShowConfirmationModal(false)
-            onClose()
+            removePlan(plan, activeSavingPlans, setActiveSavingPlans, walletAddress);
+            setShowConfirmationModal(false);
+            onClose();
           }}
           onCancel={() => setShowConfirmationModal(false)}
         />
       )}
     </>
-  )
+  );
 }
