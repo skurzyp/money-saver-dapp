@@ -13,6 +13,7 @@ interface SavingPlanModalProps {
   activeSavingPlans: SavingPlan[] | null;
   setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>;
   walletAddress: string | undefined;
+  sendSol: (programAddress: string) => void;
 }
 
 function removePlan(
@@ -37,6 +38,7 @@ export default function SavingPlanModal({
                                           activeSavingPlans,
                                           setActiveSavingPlans,
                                           walletAddress,
+                                          sendSol,
                                         }: SavingPlanModalProps) {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
 
@@ -99,7 +101,7 @@ export default function SavingPlanModal({
                   </p>
                 </div>
                 <Link
-                  href={plan.strategy.providerUrl}
+                  href={plan.strategy.programAddress}
                   target="_blank"
                   className="flex items-center gap-1 text-sm text-[#0fe0b6] hover:underline"
                 >
@@ -111,7 +113,9 @@ export default function SavingPlanModal({
             {/* Actions */}
             <div className="flex gap-4 mb-4">
               <button
-                className="flex-1 px-4 py-3 bg-[#0fe0b6] hover:bg-[#0cc9a3] text-white hover:text-[#0fe0b6] font-medium rounded-md transition-colors">
+                className="flex-1 px-4 py-3 bg-[#0fe0b6] hover:bg-[#0cc9a3] text-white hover:text-[#0fe0b6] font-medium rounded-md transition-colors"
+                onClick={()=>sendSol(plan.strategy.programAddress)}
+              >
                 Add Funds
               </button>
               <button
