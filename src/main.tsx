@@ -8,6 +8,7 @@ import { createAppKit } from '@reown/appkit';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import MainPage from './pages/MainPage.tsx';
 import Dashboard from './pages/Dashboard.tsx';
+import Documentation from './pages/Documentation.tsx';
 
 createAppKit({
   adapters: [solanaWeb3JsAdapter],
@@ -29,6 +30,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/" element={<AuthPage />} />
         <Route path="/main" element={<MainPage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/docs" element={<Documentation/>} />
       </Routes>
     </Router>
   </StrictMode>
