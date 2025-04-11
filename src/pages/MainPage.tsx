@@ -67,7 +67,9 @@ export default function StartingScreen() {
             </p>
             <div className="pt-4 space-y-4">
               <button
-                className="px-6 py-3 bg-white/10 hover:bg-white/20 transition-colors rounded-md text-white font-medium">
+                className="px-6 py-3 bg-white/10 hover:bg-white/20 transition-colors rounded-md text-white font-medium"
+                onClick={() => navigate('/docs')}
+              >
                 Learn more
               </button>
               <p className="text-sm text-gray-400 flex items-center gap-2">
@@ -76,15 +78,21 @@ export default function StartingScreen() {
             </div>
           </div>
 
-          <div className="relative">
+          <div className="relative p-6">
             <div
-              className="absolute -z-10 w-72 h-72 bg-[#0fe0b6]/30 rounded-full blur-3xl top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"></div>
+              className="absolute w-100 h-100 bg-[#0fe0b6]/30 rounded-full blur-3xl top-2/3 left-1/3 transform -translate-x-1/4 -translate-y-1/2">
+            </div>
+            <img
+              src="/digital-logo.png"
+              alt="Solana Logo"
+              className="w-100 h-100 "
+            />
           </div>
         </div>
       </main>
 
       {/* Features Section */}
-      <FeaturesSection/>
+      <FeaturesSection />
     </div>
   )
 }
