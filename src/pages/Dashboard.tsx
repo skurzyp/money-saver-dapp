@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Link, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { SavingPlan } from '../types/types.ts';
 import SavingPlanModal from '../components/savingPlanModal.tsx';
 import CreateStrategyModal from '../components/createStrategyModal.tsx';
 import { getSavingPlans } from '../lib/firebase/repository/SavingPlansRepository.ts';
 import { useAppKitAccount } from '@reown/appkit/react';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Dashboard() {
@@ -13,6 +14,7 @@ export default function Dashboard() {
   const [activeSavingPlans, setActiveSavingPlans] = useState<SavingPlan[] | null>([]);
   const [_loading, setLoading] = useState(true);
   const { address, isConnected } = useAppKitAccount();
+  const navigate = useNavigate();
 
   const fetchPlans = async () => {
     if (!isConnected && address !== undefined) return;
@@ -32,15 +34,28 @@ export default function Dashboard() {
       {/* Header */}
       <header className="border-b border-[#4d3c60] p-4">
         <div className="container mx-auto flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-[#0fe0b6]">
-            Money Saver
-          </Link>
+          <div className="flex row items-center gap-4 cursor-pointer" onClick={() => navigate('/main')}>
+            <h1 className="text-2xl font-bold text-[#0fe0b6]"> Sol Saver</h1>
+            <img
+              src="/digital-logo.png"
+              alt="Solana Logo"
+              className="w-16 h-16 object-contain"
+            />
+          </div>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <button
-                className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors">
+                className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors"
+                onClick={() => navigate('/docs')}
+              >
                 Documentation
+              </button>
+              <button
+                className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors"
+                onClick={() => navigate('/main')}
+              >
+                Home
               </button>
             </div>
             <appkit-button />
