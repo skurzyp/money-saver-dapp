@@ -1,5 +1,3 @@
-'use client';
-
 import { ExternalLink, HelpCircle, X, Link } from 'lucide-react';
 import type { SavingPlan } from '../types/types.ts';
 import React, { useEffect } from 'react';

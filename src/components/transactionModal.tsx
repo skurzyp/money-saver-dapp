@@ -1,5 +1,5 @@
 import { X } from "lucide-react"
-import React, { useState } from "react"
+import { useState } from "react"
 import ConfirmationModal from './confirmationModal.tsx';
 
 interface TransactionModalProps {

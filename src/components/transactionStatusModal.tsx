@@ -1,4 +1,3 @@
-"use client"
 
 import { X, Loader2, CheckCircle, ExternalLink, AlertCircle } from "lucide-react"
 import { useState, useEffect } from "react"
