@@ -4,8 +4,12 @@ import { SavingPlan } from '../types/types.ts';
 import SavingPlanModal from '../components/savingPlanModal.tsx';
 import CreateStrategyModal from '../components/createStrategyModal.tsx';
 import { getSavingPlans } from '../lib/firebase/repository/SavingPlansRepository.ts';
-import { useAppKitAccount } from '@reown/appkit/react';
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
 import { useNavigate } from 'react-router-dom';
+import { Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
+import { useAppKitConnection } from '@reown/appkit-adapter-solana/react';
+import { solanaDevnet } from '@reown/appkit/networks';
+import type { Provider } from '@reown/appkit-adapter-solana/react'
 
 
 export default function Dashboard() {
@@ -15,6 +19,9 @@ export default function Dashboard() {
   const [_loading, setLoading] = useState(true);
   const { address, isConnected } = useAppKitAccount();
   const navigate = useNavigate();
+  const { connection } = useAppKitConnection();
+  const { walletProvider } = useAppKitProvider<Provider>(solanaDevnet.chainNamespace);
+
 
   const fetchPlans = async () => {
     if (!isConnected && address !== undefined) return;
@@ -23,6 +30,33 @@ export default function Dashboard() {
     setActiveSavingPlans(plans);
     setLoading(false);
   };
+
+  const sendSol = async (programAddress: string, amount = 0.001): Promise<string> => {
+    if (!address || !connection) throw Error("user is disconnected")
+
+    const wallet = new PublicKey(address)
+    if (!wallet) throw Error("wallet provider is not available")
+
+    const latestBlockhash = await connection.getLatestBlockhash()
+
+    // Convert amount from SOL to lamports (1 SOL = 1,000,000,000 lamports)
+    const lamports = Math.floor(amount * 1_000_000_000)
+
+    const transaction = new Transaction({
+      feePayer: wallet,
+      recentBlockhash: latestBlockhash?.blockhash,
+    }).add(
+      SystemProgram.transfer({
+        fromPubkey: wallet,
+        toPubkey: new PublicKey(programAddress), // destination address
+        lamports: lamports,
+      }),
+    )
+
+    const sig = await walletProvider.sendTransaction(transaction, connection)
+    console.log(`Signature: ${sig}`)
+    return sig
+  }
 
   useEffect(() => {
     console.log(`address: ${address}, isConnected: ${isConnected}`);
@@ -132,6 +166,7 @@ export default function Dashboard() {
         activeSavingPlans={activeSavingPlans}
         setActiveSavingPlans={setActiveSavingPlans}
         walletAddress={address}
+        sendSol={sendSol}
       />}
 
       {/* Create Strategy Modal */}

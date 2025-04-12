@@ -51,3 +51,18 @@ export async function deleteSavingPlan(walletAddress: string | undefined, plan: 
   }
 }
 
+export async function updateSavingPlan(walletAddress: string | undefined, plan: SavingPlan) {
+  if (!walletAddress || !plan.id) {
+    console.error("Missing wallet address or plan ID. Can't update saving plan.");
+    return false;
+  }
+
+  try {
+    const docRef = doc(db, 'savingPlans', walletAddress, 'plans', plan.id);
+    await setDoc(docRef, { ...plan }, { merge: true }); // merge ensures it only updates provided fields
+    return true;
+  } catch (error) {
+    console.error("Failed to update saving plan:", error);
+    return false;
+  }
+}

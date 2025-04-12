@@ -3,7 +3,7 @@ export type SavingStrategy = {
   provider: string;
   dual: boolean;
   currency: Currency[];
-  providerUrl: string;
+  programAddress: string;
   apy: number;
 };
 
