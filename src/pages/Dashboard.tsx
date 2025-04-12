@@ -31,27 +31,31 @@ export default function Dashboard() {
     setLoading(false);
   };
 
-  const sendSol = async (programAddress: string) => {
-    if (!address || !connection) throw Error('user is disconnected');
+  const sendSol = async (programAddress: string, amount = 0.001): Promise<string> => {
+    if (!address || !connection) throw Error("user is disconnected")
 
-    const wallet = new PublicKey(address);
-    if (!wallet) throw Error('wallet provider is not available');
+    const wallet = new PublicKey(address)
+    if (!wallet) throw Error("wallet provider is not available")
 
-    const latestBlockhash = await connection.getLatestBlockhash();
+    const latestBlockhash = await connection.getLatestBlockhash()
 
-    const transaction= new Transaction({
+    // Convert amount from SOL to lamports (1 SOL = 1,000,000,000 lamports)
+    const lamports = Math.floor(amount * 1_000_000_000)
+
+    const transaction = new Transaction({
       feePayer: wallet,
       recentBlockhash: latestBlockhash?.blockhash,
     }).add(
       SystemProgram.transfer({
         fromPubkey: wallet,
         toPubkey: new PublicKey(programAddress), // destination address
-        lamports: 1000,
-      })
-    );
+        lamports: lamports,
+      }),
+    )
 
     const sig = await walletProvider.sendTransaction(transaction, connection)
-    console.log(`Signature: ${sig}`);
+    console.log(`Signature: ${sig}`)
+    return sig
   }
 
   useEffect(() => {
