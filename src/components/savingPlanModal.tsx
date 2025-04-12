@@ -1,21 +1,21 @@
-"use client"
+'use client';
 
-import { ExternalLink, HelpCircle, X, Link } from "lucide-react"
-import type { SavingPlan } from "../types/types.ts"
-import type React from "react"
-import { useState } from "react"
-import ConfirmationModal from "../components/confirmationModal"
-import TransactionStatusModal, { type TransactionStatus } from "../components/transactionStatusModal"
-import { deleteSavingPlan } from "../lib/firebase/repository/SavingPlansRepository.ts"
+import { ExternalLink, HelpCircle, X, Link } from 'lucide-react';
+import type { SavingPlan } from '../types/types.ts';
+import React, { useEffect } from 'react';
+import { useState } from 'react';
+import ConfirmationModal from '../components/confirmationModal';
+import TransactionStatusModal, { type TransactionStatus } from '../components/transactionStatusModal';
+import { deleteSavingPlan, updateSavingPlan } from '../lib/firebase/repository/SavingPlansRepository.ts';
 import TransactionModal from './transactionModal.tsx';
 
 interface SavingPlanModalProps {
-  plan: SavingPlan
-  onClose: () => void
-  activeSavingPlans: SavingPlan[] | null
-  setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>
-  walletAddress: string | undefined
-  sendSol: (programAddress: string, amount: number) => Promise<string>
+  plan: SavingPlan;
+  onClose: () => void;
+  activeSavingPlans: SavingPlan[] | null;
+  setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>;
+  walletAddress: string | undefined;
+  sendSol: (programAddress: string, amount: number) => Promise<string>;
 }
 
 export default function SavingPlanModal({
@@ -26,44 +26,44 @@ export default function SavingPlanModal({
                                           walletAddress,
                                           sendSol,
                                         }: SavingPlanModalProps) {
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false)
-  const [showAmountInputModal, setShowAmountInputModal] = useState(false)
-  const [transactionAmount, setTransactionAmount] = useState<number | undefined>()
-  const [transactionStatus, setTransactionStatus] = useState<TransactionStatus | null>(null)
-  const [transactionHash, setTransactionHash] = useState<string | undefined>()
-  const [transactionError, setTransactionError] = useState<string | undefined>()
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false);
+  const [showAmountInputModal, setShowAmountInputModal] = useState(false);
+  const [transactionAmount, setTransactionAmount] = useState<number | undefined>();
+  const [transactionStatus, setTransactionStatus] = useState<TransactionStatus | null>(null);
+  const [transactionHash, setTransactionHash] = useState<string | undefined>();
+  const [transactionError, setTransactionError] = useState<string | undefined>();
 
   const handleAddFunds = () => {
-    setShowAmountInputModal(true)
-  }
+    setShowAmountInputModal(true);
+  };
 
   const handleAmountConfirm = (amount: number) => {
-    setTransactionAmount(amount)
-    setShowAmountInputModal(false)
-    setShowConfirmationModal(true)
-  }
+    setTransactionAmount(amount);
+    setShowAmountInputModal(false);
+    setShowConfirmationModal(true);
+  };
 
   const handleTransactionConfirm = async () => {
-    setShowConfirmationModal(false)
-    setTransactionStatus("processing")
+    setShowConfirmationModal(false);
+    setTransactionStatus('processing');
 
     try {
-      const txHash = await sendSol(plan.strategy.programAddress, transactionAmount!)
-      setTransactionHash(txHash)
-      setTransactionStatus("success")
+      const txHash = await sendSol(plan.strategy.programAddress, transactionAmount!);
+      setTransactionHash(txHash);
+      setTransactionStatus('success');
     } catch (error) {
-      console.error("Transaction error:", error)
-      setTransactionError(typeof error === "string" ? error : "Transaction failed. Please try again.")
-      setTransactionStatus("error")
+      console.error('Transaction error:', error);
+      setTransactionError(typeof error === 'string' ? error : 'Transaction failed. Please try again.');
+      setTransactionStatus('error');
     }
-  }
+  };
 
   const handleTransactionClose = () => {
-    setTransactionStatus(null)
-    setTransactionAmount(undefined)
-    setTransactionHash(undefined)
-    setTransactionError(undefined)
-  }
+    setTransactionStatus(null);
+    setTransactionAmount(undefined);
+    setTransactionHash(undefined);
+    setTransactionError(undefined);
+  };
 
   function removePlan(
     plan: SavingPlan,
@@ -81,6 +81,14 @@ export default function SavingPlanModal({
     throw ('Error removing plan.');
   }
 
+  useEffect(() => {
+    if (transactionStatus === 'success' && transactionAmount !== undefined) {
+      plan.current += transactionAmount;
+      plan.progress += (plan.current / plan.target) * 100;
+      updateSavingPlan(walletAddress, plan).then(() => console.log(`Plan: ${plan.name} filled with ${transactionAmount}. Current progress: ${plan.progress}`));
+    }
+  }, [transactionStatus]);
+
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -88,7 +96,8 @@ export default function SavingPlanModal({
         <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose}></div>
 
         {/* Modal */}
-        <div className="bg-gradient-to-br from-[#4d3c60] to-[#2d1e3e] rounded-xl border border-[#4d3c60] shadow-2xl w-full max-w-lg relative z-10 animate-fade-in">
+        <div
+          className="bg-gradient-to-br from-[#4d3c60] to-[#2d1e3e] rounded-xl border border-[#4d3c60] shadow-2xl w-full max-w-lg relative z-10 animate-fade-in">
           {/* Close button */}
           <button
             onClick={onClose}
@@ -181,9 +190,9 @@ export default function SavingPlanModal({
         <ConfirmationModal
           message="Are you sure you want to end this strategy?"
           onConfirm={() => {
-            removePlan(plan, activeSavingPlans, setActiveSavingPlans, walletAddress)
-            setShowConfirmationModal(false)
-            onClose()
+            removePlan(plan, activeSavingPlans, setActiveSavingPlans, walletAddress);
+            setShowConfirmationModal(false);
+            onClose();
           }}
           onCancel={() => setShowConfirmationModal(false)}
         />
@@ -200,8 +209,8 @@ export default function SavingPlanModal({
           message={`Are you sure you want to add ${transactionAmount} SOL to this strategy?`}
           onConfirm={handleTransactionConfirm}
           onCancel={() => {
-            setShowConfirmationModal(false)
-            setTransactionAmount(undefined)
+            setShowConfirmationModal(false);
+            setTransactionAmount(undefined);
           }}
         />
       )}
@@ -218,5 +227,5 @@ export default function SavingPlanModal({
         />
       )}
     </>
-  )
+  );
 }
