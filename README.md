@@ -50,9 +50,9 @@ The available investment strategies (e.g., providing liquidity on DEXs, liquid s
 Deposits to saving plans are simulated through SOL transactions on the Solana Devnet. These transactions mimic the user experience and can be verified on the Solana Devnet Explorer.
 
 - **Smart Contracts:**
-Smart contract functionality is marked as a TODO and will be implemented in a future update.
-- 
-Smart Contract Overview
+Smart contract functionality is in a development phase
+
+## Smart Contract Overview
 
 The smart contract, written using the Anchor framework for Solana, defines the basic logic for creating and withdrawing from a timelocked savings plan. This is a minimal prototype for locking user funds (in SOL) for a specified time to simulate interest-based savings.
 Key Features Implemented
@@ -67,7 +67,7 @@ Key Features Implemented
 
     Secure ownership: Only the user who created the plan can withdraw it.
 
-create_plan
+### create_plan
 
 This instruction initializes a new savings plan:
 
@@ -89,7 +89,7 @@ This instruction initializes a new savings plan:
 
         Stores amount, unlock time, APR, estimated interest, and owner.
 
-withdraw
+### withdraw
 
 This instruction allows the owner to withdraw locked funds:
 
@@ -101,7 +101,7 @@ This instruction allows the owner to withdraw locked funds:
 
     Closes account: Closes the SavingsPlan account to reclaim rent.
 
-Future Upgrade Ideas
+### Future Upgrade Ideas
 
     Multiple strategies: Store strategy types in the plan and add a new field like strategy_type: u8.
 
