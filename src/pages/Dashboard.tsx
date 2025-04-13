@@ -1,44 +1,95 @@
-"use client"
-
-import { useState } from "react"
-import { Link, Plus } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Plus } from 'lucide-react';
 import { SavingPlan } from '../types/types.ts';
 import SavingPlanModal from '../components/savingPlanModal.tsx';
 import CreateStrategyModal from '../components/createStrategyModal.tsx';
-import { strategies } from '../lib/sampleData.ts';
+import { getSavingPlans } from '../lib/firebase/repository/SavingPlansRepository.ts';
+import { useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
+import { useNavigate } from 'react-router-dom';
+import { Transaction, SystemProgram, PublicKey } from '@solana/web3.js';
+import { useAppKitConnection } from '@reown/appkit-adapter-solana/react';
+import { solanaDevnet } from '@reown/appkit/networks';
+import type { Provider } from '@reown/appkit-adapter-solana/react'
 
-// Sample saving plan data
-const samplePlan: SavingPlan = {
-  id: "1",
-  name: "Vacation Fund",
-  description:
-    "Saving for my dream vacation to Bali next summer. This fund will cover flights, accommodations, and activities for a 2-week stay.",
-  progress: 65,
-  target: 5000,
-  current: 3250,
-  image: "/placeholder.svg?height=200&width=400",
-  strategy: strategies[0],
-}
 
 export default function Dashboard() {
-  const [selectedPlan, setSelectedPlan] = useState<SavingPlan>()
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [activeSavingPlans, setActiveSavingPlans] = useState<SavingPlan[] | null>([samplePlan])
+  const [selectedPlan, setSelectedPlan] = useState<SavingPlan>();
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [activeSavingPlans, setActiveSavingPlans] = useState<SavingPlan[] | null>([]);
+  const [_loading, setLoading] = useState(true);
+  const { address, isConnected } = useAppKitAccount();
+  const navigate = useNavigate();
+  const { connection } = useAppKitConnection();
+  const { walletProvider } = useAppKitProvider<Provider>(solanaDevnet.chainNamespace);
+
+
+  const fetchPlans = async () => {
+    if (!isConnected && address !== undefined) return;
+    setLoading(true);
+    const plans = await getSavingPlans(address as string);
+    setActiveSavingPlans(plans);
+    setLoading(false);
+  };
+
+  const sendSol = async (programAddress: string, amount = 0.001): Promise<string> => {
+    if (!address || !connection) throw Error("user is disconnected")
+
+    const wallet = new PublicKey(address)
+    if (!wallet) throw Error("wallet provider is not available")
+
+    const latestBlockhash = await connection.getLatestBlockhash()
+
+    // Convert amount from SOL to lamports (1 SOL = 1,000,000,000 lamports)
+    const lamports = Math.floor(amount * 1_000_000_000)
+
+    const transaction = new Transaction({
+      feePayer: wallet,
+      recentBlockhash: latestBlockhash?.blockhash,
+    }).add(
+      SystemProgram.transfer({
+        fromPubkey: wallet,
+        toPubkey: new PublicKey(programAddress), // destination address
+        lamports: lamports,
+      }),
+    )
+
+    const sig = await walletProvider.sendTransaction(transaction, connection)
+    console.log(`Signature: ${sig}`)
+    return sig
+  }
+
+  useEffect(() => {
+    console.log(`address: ${address}, isConnected: ${isConnected}`);
+    fetchPlans();
+  }, [address]);
 
   return (
     <div className="min-h-screen min-w-screen bg-gradient-to-b from-[#3b2d4d] to-[#2d1e3e] text-white">
       {/* Header */}
       <header className="border-b border-[#4d3c60] p-4">
         <div className="container mx-auto flex items-center justify-between">
-          <Link href="/" className="text-2xl font-bold text-[#0fe0b6]">
-            Money Saver
-          </Link>
+          <div className="flex row items-center gap-4 cursor-pointer" onClick={() => navigate('/main')}>
+            <h1 className="text-2xl font-bold text-[#0fe0b6]"> Sol Saver</h1>
+            <img
+              src="/digital-logo.png"
+              alt="Solana Logo"
+              className="w-16 h-16 object-contain"
+            />
+          </div>
 
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <button
-                className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors">
+                className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors"
+                onClick={() => navigate('/docs')}
+              >
                 Documentation
+              </button>
+              <button
+                className="flex items-center gap-1 px-3 py-2 text-sm rounded-md hover:bg-[#4d3c60]/50 transition-colors"
+                onClick={() => navigate('/main')}
+              >
+                Home
               </button>
             </div>
             <appkit-button />
@@ -114,17 +165,21 @@ export default function Dashboard() {
         onClose={() => setSelectedPlan(undefined)}
         activeSavingPlans={activeSavingPlans}
         setActiveSavingPlans={setActiveSavingPlans}
+        walletAddress={address}
+        sendSol={sendSol}
       />}
 
       {/* Create Strategy Modal */}
       {showCreateModal && (
         <CreateStrategyModal
-          onClose={() => setShowCreateModal(false)}
-          activeSavingPlans={activeSavingPlans}
-          setActiveSavingPlans={setActiveSavingPlans}
+          onClose={() => {
+            setShowCreateModal(false);
+            fetchPlans();
+          }}
+          walletAddress={address}
         />
       )}
     </div>
-  )
+  );
 }
 

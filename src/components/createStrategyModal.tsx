@@ -1,21 +1,19 @@
-"use client";
-
 import { useState } from "react";
 import { ChevronDown, HelpCircle, Info, Link, X } from "lucide-react";
-import { SavingPlan, Strategy } from '../types/types.ts';
+import { SavingPlan, SavingStrategy } from '../types/types.ts';
 import { strategies } from '../lib/sampleData.ts';
+import { createSavingPlan } from '../lib/firebase/repository/SavingPlansRepository.ts';
 
 
 interface CreateStrategyModalProps {
   onClose: () => void;
-  activeSavingPlans: SavingPlan[] | null;
-  setActiveSavingPlans: React.Dispatch<React.SetStateAction<SavingPlan[] | null>>;
+  walletAddress: string | undefined;
 }
 
-export default function CreateStrategyModal({ onClose, activeSavingPlans, setActiveSavingPlans }: CreateStrategyModalProps) {
+export default function CreateStrategyModal({ onClose, walletAddress }: CreateStrategyModalProps) {
   const [name, setName] = useState("");
   const [targetAmount, setTargetAmount] = useState("");
-  const [selectedStrategy, setSelectedStrategy] = useState<Strategy | null>(null);
+  const [selectedStrategy, setSelectedStrategy] = useState<SavingStrategy | null>(null);
   const [showStrategyDropdown, setShowStrategyDropdown] = useState(false);
 
   const isFormValid = name.trim() !== "" && targetAmount.trim() !== "" && selectedStrategy !== null;
@@ -179,7 +177,7 @@ export default function CreateStrategyModal({ onClose, activeSavingPlans, setAct
                                           ? 'bg-[#0fe0b6] text-white hover:bg-[#0cc9a3] hover:text-[#0fe0b6]'
                                           : 'bg-[#4d3c60] text-gray-500 cursor-not-allowed'}
                           `}
-                onClick={(e) => {
+                onClick={async (e) => {
                   e.preventDefault(); // prevent form reload
 
                   if (!name || !targetAmount || !selectedStrategy) return;
@@ -188,14 +186,14 @@ export default function CreateStrategyModal({ onClose, activeSavingPlans, setAct
                     id: new Date().getTime().toString(),
                     name,
                     target: parseFloat(targetAmount),
-                    current: 0, // assume starting amount
-                    progress: (100 / parseFloat(targetAmount)) * 100,
+                    current: 0,
+                    progress: (0 / parseFloat(targetAmount)) * 100,
                     description: `Investing in ${selectedStrategy.name} via ${selectedStrategy.provider}`,
                     image: '',
                     strategy: selectedStrategy
                   };
 
-                  setActiveSavingPlans([...activeSavingPlans as SavingPlan[], newPlan]);
+                  createSavingPlan(walletAddress, newPlan);
                   onClose();
                 }}
               >
