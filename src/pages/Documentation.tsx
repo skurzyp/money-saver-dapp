@@ -47,7 +47,7 @@ export default function Documentation() {
         "Select the saving plan you wish to activate from your dashboard.",
         "Choose the tokens you want to deposit into your saving plan.",
         "Specify the amount of tokens you wish to contribute.",
-        "Review the transaction details, including any fees associated with your chosen strategy.",
+        "Review the transaction details and submit it.",
         "Confirm the transaction using your connected wallet.",
         "Once confirmed, your saving plan will be activated and your tokens will start working for you.",
       ],
@@ -59,10 +59,9 @@ export default function Documentation() {
       description: "Track your savings growth and withdraw funds when you reach your goals.",
       details: [
         "Access your active saving plans from the dashboard to monitor their performance.",
-        "View detailed analytics on your token growth, including APY and projected timeline to reach your goal.",
+        "View detailed analytics on your token growth, including APY and goal progress",
         "Add more tokens to your saving plan at any time by selecting the 'Add Funds' option.",
-        "When you're ready to withdraw, select the 'Cash Out' option from your saving plan details.",
-        "Choose whether to withdraw partially or fully from your saving plan.",
+        "Withdraw the tokens after reaching the goal (currently not supported)",
         "Confirm the withdrawal transaction using your connected wallet.",
         "Your tokens will be transferred back to your wallet, along with any earned returns.",
       ],
@@ -237,7 +236,7 @@ export default function Documentation() {
                     <h4 className="font-medium mb-2 text-purple-800">How it works in our app</h4>
                     <p className="text-purple-700">
                       When you select Sol Staking as your strategy, we delegate your SOL tokens to a diversified set of
-                      reliable validators with proven track records. Our system automatically compounds your staking
+                      reliable validators with proven track records (no implemented yet). Our system automatically compounds your staking
                       rewards to maximize your returns over time. You can monitor your staking rewards in real-time
                       through your dashboard.
                     </p>
@@ -258,7 +257,7 @@ export default function Documentation() {
                   <p className="text-purple-700">
                     Liquidity Pools involve providing pairs of tokens to decentralized exchanges (DEXs) on Solana, such
                     as Raydium or Orca. By contributing to these pools, you enable token swaps for other users and earn
-                    a portion of the trading fees.
+                    a portion of the trading fees (not implemented yet).
                   </p>
 
                   <div className="bg-white p-4 rounded-lg border border-purple-200">
@@ -358,7 +357,7 @@ export default function Documentation() {
               <Button className="bg-white text-white hover:bg-purple-50">Connect Wallet</Button>
             </div>
           </div>
-        </section>
+        </section>  
       </div>
     </div>
   )
