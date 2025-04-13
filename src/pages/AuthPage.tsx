@@ -62,9 +62,9 @@ const AuthPage  = () => {
               <div className="w-full flex items-center justify-center">
                 <ReownModal/>
               </div>
+              {isConnected &&  <Button onClick={() => navigate('/main')}>Go to Main Screen</Button>}
             </div>
 
-            {isConnected &&  <Button onClick={() => navigate('/main')}>Go to Main Screen</Button>}
 
             <div className="text-center text-xs text-gray-500 mt-8">
               <p>By connecting your wallet, you agree to our</p>
