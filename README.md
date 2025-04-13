@@ -52,8 +52,68 @@ Deposits to saving plans are simulated through SOL transactions on the Solana De
 - **Smart Contracts:**
 Smart contract functionality is marked as a TODO and will be implemented in a future update.
 - 
-### Smartcontracts
-TODO:
+Smart Contract Overview
+
+The smart contract, written using the Anchor framework for Solana, defines the basic logic for creating and withdrawing from a timelocked savings plan. This is a minimal prototype for locking user funds (in SOL) for a specified time to simulate interest-based savings.
+Key Features Implemented
+
+    Time-locked deposits: Users lock SOL into a vault PDA for a fixed duration.
+
+    Dynamic APR calculation: Interest is estimated based on how long the funds are locked.
+
+    Simulated interest: While actual yield is not generated, interest is calculated and logged.
+
+    Withdrawal: Funds are only withdrawable after the time lock expires.
+
+    Secure ownership: Only the user who created the plan can withdraw it.
+
+create_plan
+
+This instruction initializes a new savings plan:
+
+    Validates input: Ensures that the deposit amount and duration are both non-zero.
+
+    Time lock: Calculates unlock_timestamp using the current time + duration.
+
+    APR calculation:
+
+        APR is scaled between 1% to 10% based on lock duration (1 day to 1 year).
+
+        Simple interest is estimated:
+        Interest=P×APR×tSeconds per year×10000
+        Interest=Seconds per year×10000P×APR×t​
+
+    Transfers funds: Moves SOL from the user's wallet to a vault PDA.
+
+    Initializes SavingsPlan:
+
+        Stores amount, unlock time, APR, estimated interest, and owner.
+
+withdraw
+
+This instruction allows the owner to withdraw locked funds:
+
+    Time check: Ensures current time ≥ unlock time.
+
+    Transfers SOL: Vault balance is returned to the owner.
+
+    Interest Simulation: Logs the expected interest, although no real interest is added to the balance.
+
+    Closes account: Closes the SavingsPlan account to reclaim rent.
+
+Future Upgrade Ideas
+
+    Multiple strategies: Store strategy types in the plan and add a new field like strategy_type: u8.
+
+    Top-ups.
+
+    Diffrent locking strategies. 
+
+    Smart contract upgrades for dynamic fee logic and yield integrations.
+
+    Custom fee tiers, early withdrawal penalties,.
+
+
 
 ## Further development and improvements
 1. **Smart Contract Implementation:**
@@ -73,4 +133,7 @@ Integrate an on-ramping solution, as suggested during the demo day, to simplify 
 
 6. **ETF-Like Strategies:**
 Introduce ETF-like investment strategies, such as investing in the top 10 cryptocurrencies by market cap (suggested on demo day).
+
+6. **Blik integration:**
+Introduce Blik for simple payments on polish markets (suggested on demo day).
 
