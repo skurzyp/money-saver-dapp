@@ -29,7 +29,7 @@ export default function GettingStartedDrawer({ onClose }: GettingStartedDrawerPr
                 <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center">
                   <div className="w-3 h-3 bg-[#5f27cd] rounded-full"></div>
                 </div>
-                <div className="font-large">Solana Money Saver</div>
+                <div className="font-large">earnify.sol</div>
               </div>
             </div>
 

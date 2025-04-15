@@ -15,7 +15,7 @@ export default function StartingScreen() {
       <header className="border-b border-[#4d3c60] p-4">
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex row items-center gap-4 cursor-pointer" onClick={() => navigate('/main')}>
-            <h1 className="text-2xl font-bold text-[#0fe0b6]"> Sol Saver</h1>
+            <h1 className="text-2xl font-bold text-[#0fe0b6]"> earnify.sol</h1>
             <img
               src="/digital-logo.png"
               alt="Solana Logo"
