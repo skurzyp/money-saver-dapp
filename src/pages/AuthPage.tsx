@@ -24,7 +24,7 @@ const AuthPage  = () => {
             </div>
             <h1
               className="text-3xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-            Solana Money Saver
+            earnify.sol
             </h1>
           </div>
 

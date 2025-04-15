@@ -1,8 +1,8 @@
-# Sol Saver
-Sol Saver (temporary name until a final one is chosen) is a user-friendly application designed to help users achieve their financial goals.
+# Earnify.sol
+_Earnify.sol_ is a user-friendly application designed to help users achieve their financial goals.
 By connecting a Solana wallet, users can create personalized saving plans that define goals, target amounts, and select from multiple investment strategies.
 Once the plan is set up, users make an initial deposit to kick off their saving journey.
-Additional deposits can be made to accelerate progress toward the goal, and funds can be withdrawn when the target is reached
+Additional deposits can be made to speed up progress toward the goal, and funds can be withdrawn when the target is reached
 (a small fee based on the investment amount will apply).
 
 ## How to run the app
@@ -24,7 +24,7 @@ Visit http://localhost:5173/
 You can also access the app on Vercel:  https://money-saver-dapp.vercel.app/
 
 ## Buissness plan
-The Sol Saver platform will generate revenue by applying fees to user earnings. The fee structure will be based on tiered rates that vary according to the size of the user’s investment, ensuring that larger investors are subject to appropriate fee margins.
+The _Earnify.sol_ platform will generate revenue by applying fees to user earnings. The fee structure will be based on tiered rates that vary according to the size of the user’s investment, ensuring that larger investors are subject to appropriate fee margins.
 
 Additionally, if a user decides to close their saving pool before reaching the targeted goal, an extra penalty fee will be imposed. This penalty is designed to discourage premature withdrawals and promote long-term savings.
 
